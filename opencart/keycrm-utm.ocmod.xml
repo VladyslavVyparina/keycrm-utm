@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>KeyCRM UTM capture for OpenCart</name>
+    <code>keycrm_utm_capture</code>
+    <version>1.1.0</version>
+    <author>integration_KeyCRM_UTM</author>
+    <link>https://gerc.store</link>
+
+    <file path="catalog/controller/common/footer.php">
+        <operation>
+            <search><![CDATA[$data['scripts'] = $this->document->getScripts('footer');]]></search>
+            <add position="before"><![CDATA[
+        $utm_base = ($this->request->server['HTTPS'] ? $this->config->get('config_ssl') : $this->config->get('config_url')) . 'js/keycrm/';
+        $this->document->addScript($utm_base . 'config.js');
+        $this->document->addScript($utm_base . 'utm-capture.js');
+        $this->document->addScript($utm_base . 'opencart-checkout-utm.js');
+        $this->document->addScript($utm_base . 'keycrm-form.js');
+            ]]></add>
+        </operation>
+    </file>
+
+    <file path="system/config/catalog.php">
+        <operation>
+            <search><![CDATA['startup/session',]]></search>
+            <add position="after"><![CDATA[
+        'startup/keycrm_utm',]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/confirm.php">
+        <operation>
+            <search><![CDATA[$this->model_checkout_order->addOrder($order_data);]]></search>
+            <add position="before"><![CDATA[
+        if (!empty($this->session->data['keycrm_utm']) && is_array($this->session->data['keycrm_utm'])) {
+            $utm = $this->session->data['keycrm_utm'];
+            $utm_json = json_encode($utm, JSON_UNESCAPED_UNICODE);
+            $utm_line = 'KEYCRM_UTM=' . $utm_json;
+            if (!empty($order_data['comment'])) {
+                $order_data['comment'] .= "\n" . $utm_line;
+            } else {
+                $order_data['comment'] = $utm_line;
+            }
+        }
+            ]]></add>
+        </operation>
+    </file>
+</modification>

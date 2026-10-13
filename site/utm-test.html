@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>UTM test</title>
+</head>
+<body>
+  <p>Сторінка перевірки UTM без OpenCart.</p>
+  <script src="/js/keycrm/config.js"></script>
+  <script src="/js/keycrm/utm-capture.js"></script>
+  <script>
+    console.log('getKeyCrmUtm type:', typeof getKeyCrmUtm);
+    console.log('getKeyCrmUtm value:', typeof getKeyCrmUtm === 'function' ? getKeyCrmUtm() : null);
+  </script>
+</body>
+</html>
